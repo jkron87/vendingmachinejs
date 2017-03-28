@@ -18,6 +18,21 @@ const acceptedCoins = {
 
 };
 
+let products = {
+    "chips": {
+        cell: "A1",
+        price: "0.50",
+    },
+    "candy": {
+        cell: "B2",
+        price: "0.65"
+    },
+    "cola": {
+        cell: "C3",
+        price: "1.00"
+    }
+}
+
 
 function VendingMachine() {
     this.availableCredit = 0;
@@ -38,19 +53,23 @@ VendingMachine.prototype.assignsCorrectValue = function (coinAdded) {
 };
 
 
-VendingMachine.prototype.updateCredit = function (coinAdded) {
-    if (this.assignsCorrectValue(coinAdded)) {
-        this.availableCredit += this.valueOfLastCoinAdded;
-        this.updateDisplay();
+VendingMachine.prototype.updateCredit = function (coinsAdded) {
+    for (let i = 0; i < coinsAdded.length; i++) {
+        if (this.assignsCorrectValue(coinsAdded[i])) {
+            this.availableCredit += this.valueOfLastCoinAdded;
+            this.updateDisplay();
+        }
+
     }
 };
 
-VendingMachine.prototype.updateDisplay= function () {
-        this.displayMessage = '';
+VendingMachine.prototype.updateDisplay = function () {
+    this.displayMessage = '';
 };
 
 
 module.exports = {
     AcceptedCoins: acceptedCoins,
-    VendingMachine: VendingMachine
+    VendingMachine: VendingMachine,
+    products: products
 };

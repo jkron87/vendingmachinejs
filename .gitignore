@@ -137,3 +137,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+.gitignore
+package.json
+spec/
+src/
