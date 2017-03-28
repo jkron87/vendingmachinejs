@@ -188,30 +188,53 @@ describe("when a valid coin is inserted, it will increase available credit by it
 
         });
 
-        // it("should dispense product if enough available credit", () => {
-        //     let vm = new VendingMachine();
-        //
-        //     let coinsAdded = [];
-        //
-        //     let quarter1 = {
-        //         "weight": .3
-        //     };
-        //     let quarter2 = {
-        //         "weight": .3
-        //     };
-        //     let quarter3 = {
-        //         "weight": .3
-        //     };
-        //     let quarter4 = {
-        //         "weight": .3
-        //     };
-        //
-        //     coinsAdded.push(quarter1, quarter2, quarter3, quarter4);
-        //
-        //     vm.updateCredit(coinsAdded);
-        //
-        //
-        // });
+        it("should dispense product if enough available credit", () => {
+            let vm = new VendingMachine();
+
+            let coinsAdded = [];
+
+            let quarter1 = {
+                "weight": .3
+            };
+            let quarter2 = {
+                "weight": .3
+            };
+            let quarter3 = {
+                "weight": .3
+            };
+            let quarter4 = {
+                "weight": .3
+            };
+
+            coinsAdded.push(quarter1, quarter2, quarter3, quarter4);
+
+            vm.updateCredit(coinsAdded);
+
+            expect(vm.dispense('C3')).toBe("Item dispensed");
+
+        });
+
+        it("should not dispense product if not enough credit", () => {
+            let vm = new VendingMachine();
+
+            let coinsAdded = [];
+
+            let quarter1 = {
+                "weight": .3
+            };
+            let quarter2 = {
+                "weight": .3
+            };
+            let quarter3 = {
+                "weight": .3
+            };
+
+            coinsAdded.push(quarter1, quarter2, quarter3);
+            vm.updateCredit(coinsAdded);
+
+            expect(vm.dispense('C3')).toBe("Not enough credit");
+
+        });
 
     });
 

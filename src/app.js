@@ -67,6 +67,15 @@ VendingMachine.prototype.updateDisplay = function () {
     this.displayMessage = '';
 };
 
+VendingMachine.prototype.dispense = function (cell) {
+    for (let product in products) {
+        if (products[product].cell === cell && this.availableCredit >= products[product].price) {
+            return "Item dispensed";
+        }
+    }
+        return "Not enough credit";
+};
+
 
 module.exports = {
     AcceptedCoins: acceptedCoins,
