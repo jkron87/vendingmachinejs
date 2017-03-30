@@ -45,35 +45,43 @@ function VendingMachine() {
 VendingMachine.prototype.assignsCorrectValue = function (coinAdded) {
     for (let acceptedCoin in acceptedCoins) {
         if (acceptedCoins[acceptedCoin].weight === coinAdded.weight) {
-            this.valueOfLastCoinAdded = acceptedCoins[acceptedCoin].value;
-            return true;
+            return this.valueOfLastCoinAdded = acceptedCoins[acceptedCoin].value;
         }
     }
-    return false;
 };
 
 
-VendingMachine.prototype.updateCredit = function (coinsAdded) {
+VendingMachine.prototype.addCredit = function (coinsAdded) {
     for (let i = 0; i < coinsAdded.length; i++) {
         if (this.assignsCorrectValue(coinsAdded[i])) {
             this.availableCredit += this.valueOfLastCoinAdded;
             this.updateDisplay();
         }
-
     }
 };
 
+
 VendingMachine.prototype.updateDisplay = function () {
-    this.displayMessage = '';
+    if (this.availableCredit > 0) {
+        this.displayMessage = this.availableCredit;
+    }
 };
+
+VendingMachine.prototype.updateCredit = function (product) {
+    this.availableCredit -= product.price;
+    this.availableCredit = parseFloat(this.availableCredit.toFixed(2))
+};
+
 
 VendingMachine.prototype.dispense = function (cell) {
     for (let product in products) {
         if (products[product].cell === cell && this.availableCredit >= products[product].price) {
+            this.updateCredit(products[product]);
+            this.updateDisplay();
             return "Item dispensed";
         }
     }
-        return "Not enough credit";
+    return "Not enough credit";
 };
 
 

@@ -16,82 +16,95 @@ describe("coins have a constant value", () => {
 
 });
 
+describe("vending machine display", () => {
+    it("should display 'INSERT COIN' when no coins have been inserted", () => {
+        let vm = new VendingMachine();
+
+        vm.availableCredit = 0;
+
+        expect(vm.displayMessage).toBe('INSERT COIN');
+
+    });
+
+    it("should not display 'INSERT COIN' when coins have been inserted", () => {
+        let vm = new VendingMachine();
+
+        let validQuarter = {
+            "weight": .3
+        };
+
+        vm.addCredit([validQuarter]);
+
+        expect(vm.displayMessage).not.toBe('INSERT COIN');
+
+    });
+
+    it("should display available credit when valid coins have been inserted", () => {
+        let vm = new VendingMachine();
+
+        let validQuarter = {
+            "weight": .3
+        };
+
+        vm.addCredit([validQuarter]);
+
+        expect(vm.displayMessage).toBe(0.25);
+
+    });
+
+});
+
 describe("vending machine assigns value to valid coins", () => {
-    it("accepts nickels", () => {
-        let vm = new VendingMachine();
-
-        let nickelAdded = {
-            "weight": .24
-        };
-
-        expect(vm.assignsCorrectValue(nickelAdded)).not.toBe(null);
-    });
-
-    it("accepts dimes", () => {
-        let vm = new VendingMachine();
-
-        let dimeAdded = {
-            "weight": .13
-        };
-
-        expect(vm.assignsCorrectValue(dimeAdded)).not.toBe(null);
-    });
-
 
     it("it evaluates a nickel to be .05", () => {
         let vm = new VendingMachine();
 
-        let nickelAdded = {
-            "weight": .24
-        };
+        let coinsAdded = makeCoins(1, .24);
 
-        vm.assignsCorrectValue(nickelAdded);
+        vm.addCredit(coinsAdded);
 
-        expect(vm.valueOfLastCoinAdded).toBe(.05);
+        expect(vm.displayMessage).toBe(.05);
     });
 
     it("it evaluates a dime to be .10", () => {
         let vm = new VendingMachine();
 
-        let dimeAdded = {
-            "weight": .13
-        };
+        let coinsAdded = makeCoins(1, .13);
+        vm.addCredit(coinsAdded);
 
-        vm.assignsCorrectValue(dimeAdded);
-
-        expect(vm.valueOfLastCoinAdded).toBe(.10);
+        expect(vm.displayMessage).toBe(.10);
     });
 
     it("it evaluates a quarter to be .25", () => {
         let vm = new VendingMachine();
 
-        let quarterAdded = {
-            "weight": .3
-        };
+        let coinsAdded = makeCoins(1, .3);
 
-        vm.assignsCorrectValue(quarterAdded);
+        vm.addCredit(coinsAdded);
 
-        expect(vm.valueOfLastCoinAdded).toBe(.25);
+        expect(vm.displayMessage).toBe(.25);
     });
 
 
 });
+
 
 describe("vending machine rejects invalid coins", () => {
     it("does not accept pennies", () => {
         let vm = new VendingMachine();
 
-        let coinAdded = {
+        let invalidCoin = {
             "weight": .001
         };
 
-        expect(vm.assignsCorrectValue(coinAdded)).toBe(false);
+        vm.updateCredit([invalidCoin]);
+        expect(vm.displayMessage).toBe("INSERT COIN");
     });
 
 });
 
-
 describe("when a valid coin is inserted, it will increase available credit by its amount", () => {
+
     it("increases available credit when one coin is inserted", () => {
         let vm = new VendingMachine();
 
@@ -99,15 +112,13 @@ describe("when a valid coin is inserted, it will increase available credit by it
             "weight": .3
         }];
 
-        vm.updateCredit(coinsAdded);
+        vm.addCredit(coinsAdded);
 
-        expect(vm.assignsCorrectValue(coinsAdded[0])).toBe(true);
         expect(vm.availableCredit).toBe(0.25);
     });
 
     it("does not increase available credit when invalid coin is inserted", () => {
         let vm = new VendingMachine();
-        let coinsAdded = [];
 
         let validQuarter = {
             "weight": .3
@@ -117,18 +128,13 @@ describe("when a valid coin is inserted, it will increase available credit by it
             "weight": .3153445
         };
 
-        coinsAdded.push(validQuarter, invalidCoin);
+        vm.addCredit([validQuarter, invalidCoin]);
 
-        vm.updateCredit(coinsAdded);
-
-        expect(vm.assignsCorrectValue(invalidCoin)).toBe(false);
-        expect(vm.assignsCorrectValue(validQuarter)).toBe(true);
         expect(vm.availableCredit).toBe(0.25);
     });
 
     it("increases available credit correctly when multiple valid coins are added", () => {
         let vm = new VendingMachine();
-        let coinsAdded = [];
 
         let validQuarter = {
             "weight": .3
@@ -138,105 +144,79 @@ describe("when a valid coin is inserted, it will increase available credit by it
             "weight": .24
         };
 
-        coinsAdded.push(validQuarter, validNickel);
+        vm.addCredit([validQuarter, validNickel]);
 
-        vm.updateCredit(coinsAdded);
-
-        expect(vm.assignsCorrectValue(coinsAdded[0])).toBe(true);
-        expect(vm.assignsCorrectValue(coinsAdded[1])).toBe(true);
         expect(vm.availableCredit).toBe(0.3);
     });
 
-    describe("vending machine display", () => {
-        it("should display 'INSERT COIN' when no coins have been inserted", () => {
-            let vm = new VendingMachine();
 
-            vm.availableCredit = 0;
+});
 
-            expect(vm.displayMessage).toBe('INSERT COIN');
+describe("vending machine products", () => {
+    it("should have a location and a price", () => {
+        expect(products.chips.price).toBe('0.50');
+        expect(products.candy.price).toBe('0.65');
+        expect(products.cola.price).toBe('1.00');
 
-        });
-
-        it("should not display 'INSERT COIN' when no coins have been inserted", () => {
-            let vm = new VendingMachine();
-            let coinsAdded = [];
-
-            let validQuarter = {
-                "weight": .3
-            };
-
-            coinsAdded.push((validQuarter));
-
-            vm.updateCredit(coinsAdded);
-
-
-            expect(vm.displayMessage).toBe('');
-
-        });
+        expect(products.chips.cell).toBe('A1');
+        expect(products.candy.cell).toBe('B2');
+        expect(products.cola.cell).toBe('C3');
 
     });
 
-    describe("vending machine products", () => {
-        it("should have a location and a price", () => {
-            expect(products.chips.price).toBe('0.50');
-            expect(products.candy.price).toBe('0.65');
-            expect(products.cola.price).toBe('1.00');
+    it("should dispense product", () => {
+        let vm = new VendingMachine();
 
-            expect(products.chips.cell).toBe('A1');
-            expect(products.candy.cell).toBe('B2');
-            expect(products.cola.cell).toBe('C3');
+        vm.addCredit(makeCoins(4, .3));
 
-        });
+        expect(vm.dispense('C3')).toBe("Item dispensed");
 
-        it("should dispense product if enough available credit", () => {
-            let vm = new VendingMachine();
+    });
 
-            let coinsAdded = [];
+    it("should only dispense product if enough credit is available", () => {
+        let vm = new VendingMachine();
 
-            let quarter1 = {
-                "weight": .3
-            };
-            let quarter2 = {
-                "weight": .3
-            };
-            let quarter3 = {
-                "weight": .3
-            };
-            let quarter4 = {
-                "weight": .3
-            };
 
-            coinsAdded.push(quarter1, quarter2, quarter3, quarter4);
+        vm.addCredit(makeCoins(3, .3));
 
-            vm.updateCredit(coinsAdded);
+        expect(vm.dispense('C3')).toBe("Not enough credit");
+        expect(vm.dispense('B2')).toBe("Item dispensed");
 
-            expect(vm.dispense('C3')).toBe("Item dispensed");
+    });
 
-        });
+    it("should dispense multiple products if credit is available", () => {
+        let vm = new VendingMachine();
 
-        it("should not dispense product if not enough credit", () => {
-            let vm = new VendingMachine();
 
-            let coinsAdded = [];
+        vm.addCredit(makeCoins(4, .3));
 
-            let quarter1 = {
-                "weight": .3
-            };
-            let quarter2 = {
-                "weight": .3
-            };
-            let quarter3 = {
-                "weight": .3
-            };
+        expect(vm.dispense('A1')).toBe("Item dispensed");
+        expect(vm.dispense('A1')).toBe("Item dispensed");
 
-            coinsAdded.push(quarter1, quarter2, quarter3);
-            vm.updateCredit(coinsAdded);
+    });
 
-            expect(vm.dispense('C3')).toBe("Not enough credit");
+    it("should have correct remaining credit after item is purchased", () => {
+        let vm = new VendingMachine();
 
-        });
+
+        vm.addCredit(makeCoins(5, .3));
+
+        vm.dispense('A1');
+        expect(vm.displayMessage).toBe(0.75);
+        vm.dispense('B2');
+        expect(vm.displayMessage).toBe(0.10);
 
     });
 
 
 });
+
+
+function makeCoins(number, weight) {
+    let coinsAdded = [];
+    while (number > 0) {
+        coinsAdded.push({"weight" : weight});
+        number--;
+    }
+    return coinsAdded;
+}
