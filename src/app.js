@@ -73,9 +73,17 @@ VendingMachine.prototype.updateCredit = function (product) {
 };
 
 
+VendingMachine.prototype.sufficientCredit = function(product) {
+    return this.availableCredit >= products[product].price;
+};
+
+VendingMachine.prototype.cellMatches = function(product, cell) {
+    return products[product].cell === cell;
+};
+
 VendingMachine.prototype.dispense = function (cell) {
     for (let product in products) {
-        if (products[product].cell === cell && this.availableCredit >= products[product].price) {
+        if (this.cellMatches(product, cell) && this.sufficientCredit(product)) {
             this.updateCredit(products[product]);
             this.updateDisplay();
             return "Item dispensed";
